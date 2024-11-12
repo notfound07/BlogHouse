@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Alert from './Alert'; // import the Alert component
+import Alert from './Alert';
 import './Login.css';
 
 function Login() {
@@ -10,8 +10,15 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
-    const [alert, setAlert] = useState(null); // State for alert messages
+    const [alert, setAlert] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/blogs");
+        }
+    }, [navigate]);
 
     const showAlert = (message, type) => {
         setAlert({ message, type });
@@ -43,7 +50,7 @@ function Login() {
         e.preventDefault();
 
         if (!name || !email || !password || !confirmpassword) {
-            showAlert("All fielrd are required.", "error");
+            showAlert("All fields are required.", "error");
             return;
         }
 
@@ -100,15 +107,13 @@ function Login() {
                         type="email"
                         placeholder="Email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)} rd r
-                    />
+                        onChange={(e) => setEmail(e.target.value)} />
                     <input
                         className="login-input"
                         type="password"
                         placeholder="Password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)} rd r
-                    />
+                        onChange={(e) => setPassword(e.target.value)} />
                     <button className="login-button" type="submit">Login</button>
                     <div className="login-separator">
                         <button
@@ -135,29 +140,25 @@ function Login() {
                         type="text"
                         placeholder="Full Name"
                         value={name}
-                        onChange={(e) => setName(e.target.value)} rd r
-                    />
+                        onChange={(e) => setName(e.target.value)} />
                     <input
                         className="login-input"
                         type="email"
                         placeholder="Email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)} rd r
-                    />
+                        onChange={(e) => setEmail(e.target.value)} />
                     <input
                         className="login-input"
                         type="password"
                         placeholder="Password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)} rd r
-                    />
+                        onChange={(e) => setPassword(e.target.value)} />
                     <input
                         className="login-input"
                         type="password"
                         placeholder="Confirm Password"
                         value={confirmpassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)} rd r
-                    />
+                        onChange={(e) => setConfirmPassword(e.target.value)} />
                     <button className="login-button" type="submit">Sign Up</button>
                     <div className="register-separator">
                         <button

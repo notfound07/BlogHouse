@@ -1,10 +1,19 @@
+*{
+    box-sizing: border-box;
+}
+
 .navbar {
+    position: fixed;
+    z-index: 9999;
     padding: 0 100px;
     height: 80px;
     border-bottom: 1px solid rgb(209, 209, 209);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: white;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .logo {
@@ -35,7 +44,6 @@
     cursor: pointer;
 }
 
-/* Add styles for the dropdown */
 .menu-button {
     background: none;
     border: none;
@@ -50,7 +58,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 1000;
 }
 
 .dropdown-menu {
@@ -64,7 +72,7 @@
     z-index: 10;
     width: max-content;
     border-radius: 10px;
-    z-index: 1000;
+    z-index: 9999;
 }
 
 .logout-button {
@@ -85,12 +93,23 @@
 
 
 .navbar-container {
+    position: sticky;
+    top: 80px;
+    z-index: 999;
     display: flex;
     align-items: center;
-    padding: 0 100px;
     justify-content: space-between;
-    padding-top: 20px;
+    padding: 5px 100px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    transition: box-shadow 0.3s ease-in-out;
 }
+
+.navbar-container.scrolled {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 
 .add-blogs {
     border: 1px solid #4CAF50;
@@ -130,28 +149,26 @@
 
 .categories-container {
     display: flex;
-    width: 60%;
     align-items: center;
     position: relative;
-    padding-left: 50px;
-    padding-right: 65px;
 }
 
 .categories-list {
     display: flex;
-    width: 100%;
     justify-content: flex-start;
-
+    padding: 0 50px;
+    gap: 20px;
 }
 
 .category-item {
+    position: relative;
     flex: 0 0 auto;
     text-align: center;
     padding: 10px;
     cursor: pointer;
     color: #6c6c6c;
     transition: background-color 0.3s ease;
-    width: calc(100% / 7);
+    width: calc(max-content / 7);
 }
 
 .category-item i {
@@ -168,8 +185,25 @@
 
 .category-item.active {
     color: black;
-    border-bottom: black solid 3px;
 }
+
+
+.category-item .slider-dot {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background-color: #333;
+    transition: background-color 0.3s ease;
+}
+
+.category-item.active .slider-dot {
+    display: block;
+}
+
 
 .popup-overlay {
     position: fixed;
@@ -181,14 +215,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10;
+    z-index: 99999;
 }
 
 .popup {
     background-color: #fff;
-    padding: 20px 50px;
+    padding: 20px 20px;
     border-radius: 10px;
-    width: 300px;
+    width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -251,25 +285,27 @@ textarea {
 }
 
 .blogs-container {
-    padding: 40px 100px;
+    padding: 120px 100px 40px 100px;
 }
 
 .blogs-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns */
-    gap: 20px; /* Space between items */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
 .blog-item {
-    position: relative; /* Required for absolute positioning of child elements */
+    position: relative;
     cursor: pointer;
     border: #4CAF50 solid 1px;
     box-shadow: 0 0 2px #4CAF50;
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px 20px;
     transition: box-shadow 0.3s ease;
-    background-color: #fff; /* Ensure background color for each blog item */
+    background-color: #fff;
+    height: max-content;
 }
+
 
 .blog-type {
     position: absolute;
@@ -281,15 +317,19 @@ textarea {
     border-radius: 5px;
 }
 
+.blog-date-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .blog-date {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     font-size: 12px;
     color: #666;
 }
 
 .blog-title {
+    padding-top: 20px;
     font-size: 18px;
     margin-bottom: 10px;
 }
@@ -315,3 +355,106 @@ a:hover {
     gap: 10px;
     font-size: small;
 }
+
+.blog-type-select{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #567a57;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    border-top: 1px solid #ddd;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styles */
+
+@media (max-width: 1065px) {
+    .navbar-container {
+        padding: 20px 50px;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .blogs-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .navbar {
+        padding: 0 60px;
+    }
+
+    .blogs-container {
+        padding: 120px 60px 40px 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 20px 30px;
+        gap: 20px;
+    }
+    .blogs-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .navbar {
+        padding: 0 40px;
+    }
+    .blogs-container {
+        padding: 120px 30px 40px 30px;
+    }
+}
+
+@media (max-width: 480px) and (min-width: 340px) {
+    
+    .logo {
+        height: 25px;
+    }
+    .blogs-list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .navbar-container {
+        padding: 20px 10px;
+    }
+    .blogs-container {
+        padding: 120px 20px 40px 20px;
+    }
+    .user-initials {
+        display: none;
+    }
+    .popup {
+        padding: 20px 20px;
+    }
+    .category-item i {
+        font-size: 18px;
+    }
+    .category-item p {
+        font-size: 12px;
+    }
+
+    .navbar {
+        padding: 0 20px;
+    }
+} 

@@ -1,10 +1,9 @@
-// Alert.js
 import React, { useEffect } from 'react';
 import './Alert.css';
 
 function Alert({ message, type, onClose }) {
     useEffect(() => {
-        const timer = setTimeout(onClose, 15000); // auto-close after 15 seconds
+        const timer = setTimeout(onClose, 5000);
         return () => clearTimeout(timer);
     }, [onClose]);
 

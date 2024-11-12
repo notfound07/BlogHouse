@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/Logo.png";
+import Alert from './Alert';
 import "./Blogs.css";
 
 function Blogs() {
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [userInitials, setUserInitials] = useState("");
-    const [visibleItems, setVisibleItems] = useState([0, 1, 2, 3, 4, 5]);
+    const [visibleItemsCount, setVisibleItemsCount] = useState(6);
     const [activeItem, setActiveItem] = useState(0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [blogTitle, setBlogTitle] = useState("");
@@ -16,49 +17,78 @@ function Blogs() {
     const [blogType, setBlogType] = useState("");
     const [charCount, setCharCount] = useState(200);
     const [blogs, setBlogs] = useState([]);
+    const [alert, setAlert] = useState(null);
     const [filteredBlogs, setFilteredBlogs] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState("All Categories"); // Default to "All Categories"
+    const [selectedCategory, setSelectedCategory] = useState("All Categories");
+    const [isScrolled, setIsScrolled] = useState(false);
     const navigate = useNavigate();
     const menuRef = useRef(null);
 
     const sliderItems = [
         { icon: "fa-list", label: "All Categories" },
         { icon: "fa-pencil-alt", label: "Writing Tips" },
-        { icon: "fa-camera", label: "Photography" },
+        { icon: "fa-newspaper", label: "News" },
         { icon: "fa-gamepad", label: "Gaming" },
-        { icon: "fa-utensils", label: "Food & Recipes" },
         { icon: "fa-bicycle", label: "Fitness" },
         { icon: "fa-heart", label: "Lifestyle" },
+        { icon: "fa-palette", label: "Art" },
+        { icon: "fa-utensils", label: "Food & Recipes" },
         { icon: "fa-microphone", label: "Podcasting" },
         { icon: "fa-tv", label: "Entertainment" },
+        { icon: "fa-plane", label: "Travel" },
         { icon: "fa-cogs", label: "Technology" },
         { icon: "fa-briefcase", label: "Business" },
-        { icon: "fa-newspaper", label: "News" },
-        { icon: "fa-palette", label: "Art" },
         { icon: "fa-book", label: "Books" },
+        { icon: "fa-camera", label: "Photography" },
         { icon: "fa-music", label: "Music" },
-        { icon: "fa-plane", label: "Travel" },
         { icon: "fa-users", label: "Social Media" },
         { icon: "fa-leaf", label: "Environment" },
     ];
 
-    // Fetch blogs on component mount
-    useEffect(() => {
-        const fetchBlogs = async () => {
-            try {
-                const response = await axios.get("http://localhost:3001/user/getblogs");
-                setBlogs(response.data);
-                setFilteredBlogs(response.data); // Initially, show all blogs
-                console.log("Fetched blogs:", response.data);
-            } catch (error) {
-                console.error("Error fetching blogs:", error);
-            }
-        };
+    const showAlert = (message, type) => {
+        setAlert({ message, type });
+        setTimeout(() => setAlert(null), 3000);
+    };
 
-        fetchBlogs();
+    const handleScroll = () => {
+        if (window.scrollY > 0) {
+            setIsScrolled(true);
+        } else {
+            setIsScrolled(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
-    // Set the initials of the user
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/");
+        } else {
+            const fetchBlogs = async () => {
+                try {
+                    const response = await axios.get("http://localhost:3001/user/getblogs", {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    setBlogs(response.data);
+                    setFilteredBlogs(response.data);
+                    console.log("Fetched blogs:", response.data);
+                } catch (error) {
+                    console.error("Error fetching blogs:", error);
+                }
+            };
+            fetchBlogs();
+        }
+    }, [navigate]);
+
     useEffect(() => {
         const userName = localStorage.getItem("userName");
         if (userName) {
@@ -71,17 +101,39 @@ function Blogs() {
         }
     }, []);
 
-    // Close menu if clicked outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setIsMenuOpen(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        const updateVisibleItemsCount = () => {
+            const width = window.innerWidth;
+            if (width >= 786) {
+                setVisibleItemsCount(6);
+            } else if (width >= 712) {
+                setVisibleItemsCount(5);
+            } else if (width >= 630) {
+                setVisibleItemsCount(4);
+            } else if (width >= 450) {
+                setVisibleItemsCount(3);
+            } else {
+                setVisibleItemsCount(2);
+            }
+        };
+
+        updateVisibleItemsCount();
+        window.addEventListener("resize", updateVisibleItemsCount);
+
+        return () => {
+            window.removeEventListener("resize", updateVisibleItemsCount);
         };
     }, []);
 
@@ -96,21 +148,19 @@ function Blogs() {
     };
 
     const goToNext = () => {
-        if (visibleItems[5] < sliderItems.length - 1) {
-            setVisibleItems(visibleItems.map(i => i + 6));
+        if (activeItem + visibleItemsCount < sliderItems.length) {
+            setActiveItem(activeItem + visibleItemsCount);
         }
     };
 
     const goToPrev = () => {
-        if (visibleItems[0] > 0) {
-            setVisibleItems(visibleItems.map(i => i - 6));
+        if (activeItem - visibleItemsCount >= 0) {
+            setActiveItem(activeItem - visibleItemsCount);
         }
     };
 
     const handleItemClick = (index) => {
-        setActiveItem(index);
-        const selected = sliderItems[index];
-        setSelectedCategory(selected.label); // Set the selected category
+        setSelectedCategory(sliderItems[index].label);
     };
 
     const toggleMenu = () => {
@@ -136,9 +186,13 @@ function Blogs() {
     };
 
     const handleBlogSubmit = async () => {
+        if (!blogTitle || !blogContent) {
+            showAlert("Title and content are required.", "error");
+            return;
+        }
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:3001/user/createblog", {
+            const response = await axios.post("http://localhost:3001/user/createblog", {
                 title: blogTitle,
                 content: blogContent,
                 link: blogLink,
@@ -148,25 +202,41 @@ function Blogs() {
                     Authorization: `Bearer ${token}`,
                 }
             });
+    
+            // Add the newly created blog to the state
+            const newBlog = response.data;
+            setBlogs((prevBlogs) => [...prevBlogs, newBlog]);
+    
+            // Also add it to filteredBlogs if the selected category is correct
+            if (selectedCategory === "All Categories" || selectedCategory === newBlog.type) {
+                setFilteredBlogs((prevFilteredBlogs) => [...prevFilteredBlogs, newBlog]);
+            }
+    
             togglePopup();
+            showAlert("Blog submitted successfully!", "success");
+            setBlogTitle("");
+            setBlogContent("");
+            setBlogLink("");
+            setBlogType("");
         } catch (error) {
             console.error("Error submitting blog:", error);
+            showAlert("An error occurred while submitting the blog.", "error");
         }
     };
+    
 
-    // Filter blogs based on selected category
     useEffect(() => {
         if (selectedCategory && selectedCategory !== "All Categories") {
-            // Filter blogs by the selected category type
             const filtered = blogs.filter(blog => blog.type === selectedCategory);
             setFilteredBlogs(filtered);
         } else {
-            setFilteredBlogs(blogs); // Show all blogs if "All Categories" is selected
+            setFilteredBlogs(blogs);
         }
     }, [selectedCategory, blogs]);
 
     return (
-        <div>
+        <div className="container">
+            {alert && <Alert message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
             <nav className="navbar">
                 <img className="logo" src={logo} alt="logo" />
@@ -186,7 +256,7 @@ function Blogs() {
                 </div>
             </nav>
             {isMenuOpen && <div className="overlay"></div>}
-            <div className="navbar-container">
+            <div className={`navbar-container ${isScrolled ? 'scrolled' : ''}`}>
                 <button className="add-blogs" onClick={togglePopup}>
                     Create Blog<i className="fa-solid fa-plus" />
                 </button>
@@ -195,41 +265,21 @@ function Blogs() {
                         <i className="fa-solid fa-arrow-left" />
                     </button>
                     <div className="categories-list">
-                        {sliderItems.slice(visibleItems[0], visibleItems[5] + 1).map((item, index) => (
+                        {sliderItems.slice(activeItem, activeItem + visibleItemsCount).map((item, index) => (
                             <div
-                                key={index}
-                                className={`category-item ${activeItem === visibleItems[0] + index ? "active" : ""}`}
-                                onClick={() => handleItemClick(visibleItems[0] + index)}
+                                key={activeItem + index}
+                                className={`category-item ${selectedCategory === item.label ? "active" : ""}`}
+                                onClick={() => handleItemClick(activeItem + index)}
                             >
                                 <i className={`fa-solid ${item.icon}`} />
                                 <p>{item.label}</p>
+                                <span className="slider-dot"></span>
                             </div>
                         ))}
                     </div>
                     <button className="slider-arrow next" onClick={goToNext}>
                         <i className="fa-solid fa-arrow-right" />
                     </button>
-                </div>
-            </div>
-            <div className="blogs-container">
-                <div className="blogs-list">
-                    {filteredBlogs.length > 0 ? (
-                        filteredBlogs.map((blog) => (
-                            <div key={blog._id} className="blog-item">
-                                <h3 className="blog-title">{blog.title}</h3>
-                                <p className="blog-content">{blog.content.slice(0, 200)}</p>
-                                <p className="blog-type">{blog.type}</p>
-                                <div className="blog-email-container">
-                                <i className="fa-solid fa-user"></i>
-                                <p className="blog-email" >{blog.email}</p>
-                                </div>
-                                <p className="blog-date">{new Date(blog.createdAt).toLocaleDateString()}</p>
-                                <a href={blog.link} target="_blank" rel="noopener noreferrer">Read More</a>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No blogs available for this category</p>
-                    )}
                 </div>
             </div>
 
@@ -256,7 +306,7 @@ function Blogs() {
                             value={blogLink}
                             onChange={handleLinkChange}
                         />
-                        <select value={blogType} onChange={handleTypeChange}>
+                        <select className="blog-type-select" value={blogType} onChange={handleTypeChange}>
                             <option value="">Select Blog Type</option>
                             {sliderItems.map((item, index) => (
                                 <option key={index} value={item.label}>{item.label}</option>
@@ -273,6 +323,38 @@ function Blogs() {
                     </div>
                 </div>
             )}
+
+            <div className="blogs-container">
+                <div className="blogs-list">
+                    {filteredBlogs.length > 0 ? (
+                        filteredBlogs.map((blog) => (
+                            <div key={blog._id} className="blog-item">
+                                <h3 className="blog-title">{blog.title}</h3>
+                                <p className="blog-content">{blog.content.slice(0, 200)}</p>
+                                <p className="blog-type">{blog.type}</p>
+                                <div className="blog-email-container">
+                                    <i className="fa-solid fa-user"></i>
+                                    <p className="blog-email" >{blog.email}</p>
+                                </div>
+                                <div className="blog-date-container">
+                                    <a href={blog.link} target="_blank" rel="noopener noreferrer">Read More</a>
+                                    <p className="blog-date">{new Date(blog.createdAt).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No blogs available for this category</p>
+                    )}
+                </div>
+            </div>
+            <footer className="footer">
+                <p>&copy; 2024 BlogHouse. All rights reserved.</p>
+                <div className="footer-links">
+                    <a href="#/">About</a> |
+                    <a href="#/">Contact</a> |
+                    <a href="#/">Privacy Policy</a>
+                </div>
+            </footer>
         </div>
     );
 }
