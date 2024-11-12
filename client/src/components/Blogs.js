@@ -27,7 +27,7 @@ function Blogs() {
     const baseURL =
     window.location.hostname === "localhost"
       ? "http://localhost:3001/user"
-      : `${window.location.protocol}//bloghouse-pifs.onrender.com//user`;
+      : `${window.location.protocol}//bloghouse-pifs.onrender.com/user`;
 
     const sliderItems = [
         { icon: "fa-list", label: "All Categories" },
