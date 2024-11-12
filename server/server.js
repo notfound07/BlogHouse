@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/user', userRoute);
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
     try {
         await connectDB();
         console.log(`Server is running on port ${PORT}`);
