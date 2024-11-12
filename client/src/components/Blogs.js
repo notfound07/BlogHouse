@@ -25,9 +25,9 @@ function Blogs() {
     const menuRef = useRef(null);
 
     const baseURL =
-    window.location.hostname === "localhost"
-      ? "http://localhost:3001/user"
-      : `${window.location.protocol}//bloghouse-pifs.onrender.com/user`;
+        window.location.hostname === "localhost"
+            ? "http://localhost:3001/user"
+            : `${window.location.protocol}//bloghouse-pifs.onrender.com/user`;
 
     const sliderItems = [
         { icon: "fa-list", label: "All Categories" },
@@ -65,7 +65,7 @@ function Blogs() {
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
-        
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
@@ -92,7 +92,7 @@ function Blogs() {
             };
             fetchBlogs();
         }
-    }, [navigate]);
+    }, [navigate, baseURL]);
 
     useEffect(() => {
         const userName = localStorage.getItem("userName");
@@ -207,16 +207,12 @@ function Blogs() {
                     Authorization: `Bearer ${token}`,
                 }
             });
-    
-            // Add the newly created blog to the state
             const newBlog = response.data;
             setBlogs((prevBlogs) => [...prevBlogs, newBlog]);
-    
-            // Also add it to filteredBlogs if the selected category is correct
+
             if (selectedCategory === "All Categories" || selectedCategory === newBlog.type) {
                 setFilteredBlogs((prevFilteredBlogs) => [...prevFilteredBlogs, newBlog]);
             }
-    
             togglePopup();
             showAlert("Blog submitted successfully!", "success");
             setBlogTitle("");
@@ -228,7 +224,7 @@ function Blogs() {
             showAlert("An error occurred while submitting the blog.", "error");
         }
     };
-    
+
 
     useEffect(() => {
         if (selectedCategory && selectedCategory !== "All Categories") {
@@ -290,6 +286,7 @@ function Blogs() {
 
             {isPopupVisible && (
                 <div className="popup-overlay">
+                    {alert && <Alert message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
                     <div className="popup">
                         <h2>Add a New Blog</h2>
                         <input

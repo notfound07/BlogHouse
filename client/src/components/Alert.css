@@ -13,6 +13,7 @@
     z-index: 1000;
     opacity: 0.9;
     max-width: 90%;
+    z-index: 99999;
 }
 
 .alert-success {
