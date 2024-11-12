@@ -13,6 +13,11 @@ function Login() {
     const [alert, setAlert] = useState(null);
     const navigate = useNavigate();
 
+    const baseURL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:3001/user"
+      : `${window.location.protocol}//bloghouse-pifs.onrender.com//user`;
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -33,7 +38,7 @@ function Login() {
         }
 
         try {
-            const response = await axios.post("http://localhost:3001/user/login", { email, password });
+            const response = await axios.post(`${baseURL}/login`, { email, password });
 
             if (response.status === 200) {
                 localStorage.setItem("userName", response.data.name);
@@ -60,7 +65,7 @@ function Login() {
         }
 
         try {
-            const response = await axios.post("http://localhost:3001/user/signup", {
+            const response = await axios.post(`${baseURL}/signup`, {
                 name,
                 email,
                 password,
@@ -70,7 +75,7 @@ function Login() {
             if (response.status === 201) {
                 showAlert("Registration successful!", "success");
                 resetForm();
-                const loginResponse = await axios.post("http://localhost:3001/user/login", { email, password });
+                const loginResponse = await axios.post(`${baseURL}/login`, { email, password });
 
                 if (loginResponse.status === 200) {
                     localStorage.setItem("userName", loginResponse.data.name);

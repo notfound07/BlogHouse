@@ -24,6 +24,11 @@ function Blogs() {
     const navigate = useNavigate();
     const menuRef = useRef(null);
 
+    const baseURL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:3001/user"
+      : `${window.location.protocol}//bloghouse-pifs.onrender.com//user`;
+
     const sliderItems = [
         { icon: "fa-list", label: "All Categories" },
         { icon: "fa-pencil-alt", label: "Writing Tips" },
@@ -73,7 +78,7 @@ function Blogs() {
         } else {
             const fetchBlogs = async () => {
                 try {
-                    const response = await axios.get("http://localhost:3001/user/getblogs", {
+                    const response = await axios.get(`${baseURL}/getblogs`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
@@ -192,7 +197,7 @@ function Blogs() {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:3001/user/createblog", {
+            const response = await axios.post(`${baseURL}/createblog`, {
                 title: blogTitle,
                 content: blogContent,
                 link: blogLink,
