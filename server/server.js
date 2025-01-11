@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
-const morgan = require('morgan');
 const path = require('path');
 require('dotenv').config();
 const connectDB = require('./connection'); 
@@ -10,20 +9,20 @@ const userRoute = require('./route/userroute');
 const app = express();
 
 // Middleware
-app.use(cors({ origin: "https://bloghouse-site.onrender.com" })); // Replace with your frontend URL
+app.use(cors({ origin: "https://yourfrontend.onrender.com" })); // Replace with your frontend URL
 app.use(express.json());
 app.use(compression());
-app.use(morgan("tiny")); // Logs incoming requests for debugging
 
 // Routes
 app.use('/user', userRoute);
 
 // Serve static files from the React app's build directory
-app.use(express.static(path.join(__dirname, 'client/build')));
+const buildPath = path.join(__dirname, '../client/build');
+app.use(express.static(buildPath));
 
-// Catch-all route for handling client-side routing
+// Catch-all route for React client-side routing
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 // Start Server
