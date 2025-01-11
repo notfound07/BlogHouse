@@ -9,7 +9,7 @@ const userRoute = require('./route/userroute');
 const app = express();
 
 // Middleware
-app.use(cors({ origin: "https://yourfrontend.onrender.com" })); // Replace with your frontend URL
+app.use(cors({ origin: "https://bloghouse-site.onrender.com" })); // Replace with your frontend URL
 app.use(express.json());
 app.use(compression());
 
