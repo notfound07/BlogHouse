@@ -16,7 +16,7 @@ function Login() {
     const baseURL =
     window.location.hostname === "localhost"
       ? "http://localhost:3001/user"
-      : `${window.location.protocol}//https://bloghouse-server.onrender.com/user`;
+      : `${window.location.protocol}//bloghouse-server.onrender.com/user`;
 
     useEffect(() => {
         const token = localStorage.getItem("token");
