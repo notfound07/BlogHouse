@@ -2,7 +2,7 @@ Here’s a README:
 
 ---
 
-# BlogHouse  
+# BlogHouse - Read And Post Blogs
 
 ### Overview  
 **BlogHouse** is a full-stack web application built with React that allows users to create, post, and read blogs. Designed with a simple and intuitive interface, it enables users to share their thoughts and explore others' content effortlessly by clicking on blog links to view the full articles.  
