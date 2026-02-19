@@ -1,6 +1,6 @@
 services:
   - type: static
-    name: letitwe
+    name: client
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/build
     routes:
